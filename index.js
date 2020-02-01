@@ -9,12 +9,12 @@ import Snips    from "../snips-chat/lib/snips.js";
 const logger = pino({ level: "debug" });
 const snips  = new Snips(config.get("snips_chat"));
 
-snips.on("text", function(who, what) {
+snips.on("message", function(who, what) {
   logger.info(`Send to ${who}: ${what}`);
   imessage.send(who, what);
 });
 
-snips.on("connect", function() {
+// snips.on("connect", function() {
   imessage.listen().on( "message", (msg) => {
     if (msg.fromMe) {
       logger.debug(`ignoring message from myself: ${msg.text}`);
@@ -26,8 +26,9 @@ snips.on("connect", function() {
       return;
     }
 
+    logger.debug(`Processing message: ${msg.handle}: ${msg.text}`)
     snips.push(msg.handle, msg.text);
   } );
 
   logger.info("Waiting for messages");
-});
+// });
